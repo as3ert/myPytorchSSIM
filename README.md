@@ -1,5 +1,5 @@
 # MyPytorchSSIM
-Pure Pytorch SSIM
+Fast and differentiable SSIM for pytorch.
 
 ## Test Results
 ![test](https://raw.githubusercontent.com/as3ert/myPytorchSSIM/main/testResults.png)
