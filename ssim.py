@@ -1,5 +1,5 @@
 import torch
-import torch.nn.functional as F
+import torch.nn.functional as func
 
 def mySSIM(img, img2, **kwargs):
     """
@@ -38,32 +38,32 @@ def _ssim(img, img2):
         float: SSIM result.
     """
     
-    c1 = (0.01 * 255)**2
-    c2 = (0.03 * 255)**2
+    c1 = (0.01 * 255) ** 2
+    c2 = (0.03 * 255) ** 2
 
     "Generated Gaussian Kernel, shape (11, 1.5)"
     kernel = torch.tensor([[0.0010],
-        [0.0076],
-        [0.0360],
-        [0.1094],
-        [0.2130],
-        [0.2660],
-        [0.2130],
-        [0.1094],
-        [0.0360],
-        [0.0076],
-        [0.0010]], dtype=torch.float64)
+                           [0.0076],
+                           [0.0360],
+                           [0.1094],
+                           [0.2130],
+                           [0.2660],
+                           [0.2130],
+                           [0.1094],
+                           [0.0360],
+                           [0.0076],
+                           [0.0010]], dtype=torch.float64)
     window = torch.mm(kernel, kernel.T)
     window = window.view(1, 1, 11, 11).expand(img.size(1), 1, 11, 11).to(img.dtype).to(img.device)
 
-    mu1 = F.conv2d(img, window, stride=1, padding=0, groups=img.shape[1])
-    mu2 = F.conv2d(img2, window, stride=1, padding=0, groups=img2.shape[1])
+    mu1 = func.conv2d(img, window, stride=1, padding=0, groups=img.shape[1])
+    mu2 = func.conv2d(img2, window, stride=1, padding=0, groups=img2.shape[1])
     mu1_sq = mu1.pow(2)
     mu2_sq = mu2.pow(2)
     mu1_mu2 = mu1 * mu2
-    sigma1_sq = F.conv2d(img * img, window, stride=1, padding=0, groups=img.shape[1]) - mu1_sq
-    sigma2_sq = F.conv2d(img2 * img2, window, stride=1, padding=0, groups=img.shape[1]) - mu2_sq
-    sigma12 = F.conv2d(img * img2, window, stride=1, padding=0, groups=img.shape[1]) - mu1_mu2
+    sigma1_sq = func.conv2d(img * img, window, stride=1, padding=0, groups=img.shape[1]) - mu1_sq
+    sigma2_sq = func.conv2d(img2 * img2, window, stride=1, padding=0, groups=img.shape[1]) - mu2_sq
+    sigma12 = func.conv2d(img * img2, window, stride=1, padding=0, groups=img.shape[1]) - mu1_mu2
 
     cs_map = (2 * sigma12 + c2) / (sigma1_sq + sigma2_sq + c2)
     ssim_map = ((2 * mu1_mu2 + c1) / (mu1_sq + mu2_sq + c1)) * cs_map
