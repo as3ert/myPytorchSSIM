@@ -10,4 +10,5 @@ Test #2 samples are from reference 2
 
 ## References
 https://ece.uwaterloo.ca/~z70wang/research/ssim/
+
 https://github.com/VainF/pytorch-msssim
