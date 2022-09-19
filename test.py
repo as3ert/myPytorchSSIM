@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from torchvision.io import read_image
 from ssim import SSIMLoss
 from skimage.metrics import structural_similarity as skSSIM
+
 def tensor2numpy(img):
     return np.array(img.cpu().detach())
 
@@ -27,6 +28,7 @@ for i in range(6):
     print("{:.3f}      {:.3f}      {:.3f}".format(1-calcSSIM, testSSIM, benchmark[i]))
 
 print()
+
 # Test Bench #2
 mySSIM = SSIMLoss(dtype=torch.float64)
 print("Test #2")

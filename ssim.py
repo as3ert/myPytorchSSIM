@@ -58,8 +58,7 @@ def ssim(img, img2):
 
     "Generated Gaussian Kernel, shape (11, 1.5)"
 
-    window = torch.mm(_kernel, _kernel.T)
-    window = window.view(1, 1, 11, 11).expand(img.size(1), 1, 11, 11).to(img.dtype).to(img.device)
+    window = _window.view(1, 1, 11, 11).expand(img.size(1), 1, 11, 11).to(img.dtype).to(img.device)
 
     mu1 = func.conv2d(img, window, stride=1, padding=0, groups=img.shape[1])
     mu2 = func.conv2d(img2, window, stride=1, padding=0, groups=img2.shape[1])
@@ -81,14 +80,6 @@ class SSIMLoss(nn.Module):
         self.register_buffer( 'window', _window.view(1, 1, 11, 11).expand(1,1,11,11).to(dtype) )
 
     def _ssim(self, img, img2):
-        """
-        Args:
-            img (Tensor): Images with range [0, 255], shape (n, 3/1, h, w).
-            img2 (Tensor): Images with range [0, 255], shape (n, 3/1, h, w).
-
-        Returns:
-            float: SSIM result.
-        """
         window = self.window.expand(img.size(1), -1, -1, -1).to(img.device)
 
         mu1 = func.conv2d(img, window, stride=1, padding=0, groups=img.shape[1])
