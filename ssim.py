@@ -97,4 +97,4 @@ class SSIMLoss(nn.Module):
 
     def forward(self, img, img2):
         assert img.shape == img2.shape, (f'Image shapes are different: {img.shape}, {img2.shape}.')
-        return 1 - self._ssim(img, img2)
+        return 1 - self._ssim(img, img2).mean()
