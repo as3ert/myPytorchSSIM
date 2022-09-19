@@ -46,7 +46,7 @@ _c2 = (0.03 * 255) ** 2
 #     ssim = _ssim(img * 255., img2 * 255.)
 #     return ssim
 
-def _ssim(img, img2):
+def ssim(img, img2):
     """
     Args:
         img (Tensor): Images with range [0, 255], shape (n, 3/1, h, w).
@@ -77,7 +77,6 @@ def _ssim(img, img2):
 class SSIMLoss(nn.Module):
     def __init__(self, dtype=torch.float32):
         super(SSIMLoss, self).__init__()
-        self.ssim = _ssim
         # register kernel as buffer
         self.register_buffer( 'window', _window.view(1, 1, 11, 11).expand(1,1,11,11).to(dtype) )
 
@@ -90,7 +89,7 @@ class SSIMLoss(nn.Module):
         Returns:
             float: SSIM result.
         """
-        window = window.expand(img.size(1)).to(img.device)
+        window = self.window.expand(img.size(1), -1, -1, -1).to(img.device)
 
         mu1 = func.conv2d(img, window, stride=1, padding=0, groups=img.shape[1])
         mu2 = func.conv2d(img2, window, stride=1, padding=0, groups=img2.shape[1])
@@ -107,4 +106,4 @@ class SSIMLoss(nn.Module):
 
     def forward(self, img, img2):
         assert img.shape == img2.shape, (f'Image shapes are different: {img.shape}, {img2.shape}.')
-        return 1 - self.ssim(img, img2)
+        return 1 - self._ssim(img, img2)
